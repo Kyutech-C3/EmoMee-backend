@@ -17,6 +17,8 @@ pytest = "*"
 sqlalchemy-utils = "*"
 python-dotenv = "*"
 pyjwt = "*"
+python-socketio = "*"
+fastapi-socketio = "*"
 
 [dev-packages]
 

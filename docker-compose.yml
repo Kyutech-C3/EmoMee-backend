@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     ports:
-      - '6000:8000'
+      - '6060:8000'
     depends_on:
       - db
 
