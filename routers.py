@@ -3,7 +3,7 @@ from starlette.websockets import WebSocket
 from cruds import create_new_room, exit_room_by_id, join_room_by_id
 from db.db import get_db
 from db.db import Session
-from schemas import Room as RoomSchema
+from schemas import CreateRoom, Room as RoomSchema
 from utils import class_to_json
 
 router = APIRouter()
@@ -11,13 +11,15 @@ router = APIRouter()
 clients = {}
 
 @router.post('/api/v1/room', response_model=RoomSchema)
-async def create_room(db: Session = Depends(get_db)):
-    room = create_new_room(db)
+async def create_room(payload: CreateRoom, db: Session = Depends(get_db)):
+    room = create_new_room(db, payload.limit)
     return room
 
 @router.websocket('/ws/room/{room_id}')
 async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', db: Session = Depends(get_db)):
     user, room = join_room_by_id(db, room_id, user_name)
+    if user == None and room == None:
+        return
 
     await ws.accept()
     key = ws.headers.get('sec-websocket-key')

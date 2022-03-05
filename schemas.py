@@ -11,6 +11,9 @@ class User(JoinUser):
     class Config:
         orm_mode = True
 
+class CreateRoom(BaseModel):
+    limit: int
+
 class Room(BaseModel):
     room_id: str
     expired_at: datetime
