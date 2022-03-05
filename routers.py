@@ -10,7 +10,7 @@ router = APIRouter()
 
 clients = {}
 
-@router.post('/room', response_model=RoomSchema)
+@router.post('/api/v1/room', response_model=RoomSchema)
 async def create_room(db: Session = Depends(get_db)):
     room = create_new_room(db)
     return room
