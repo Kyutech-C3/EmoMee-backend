@@ -10,27 +10,27 @@
 - 表情の変化時
 ```json
 {
-    'event': 'change_emotion',
-    'user_id': '1234-abcdefgh-dddddddd',
-    'emotion': 'happy'
+    "event": "change_emotion",
+    "user_id": "1234-abcdefgh-dddddddd",
+    "emotion": "happy"
 }
 ```
 
 - 表情ごとに使用する絵文字の変更時
 ```json
 {
-    'event': 'change_setting_emoji',
-    'user_id': '1234-abcdefgh-dddddddd',
-    'emotion': 'happy',
-    'emoji': ''
+    "event": "change_setting_emoji",
+    "user_id": "1234-abcdefgh-dddddddd",
+    "emotion": "happy",
+    "emoji": ""
 }
 ```
 
 - 離席時
 ```json
 {
-    'event': 'switch_afk',
-    'user_id': '1234-abcdefgh-dddddddd',
-    'is_afk': true
+    "event": "switch_afk",
+    "user_id": "1234-abcdefgh-dddddddd",
+    "is_afk": true
 }
 ```
