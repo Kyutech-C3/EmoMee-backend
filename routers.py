@@ -91,19 +91,19 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
                 changed_user = change_emotion(room_id, user.user_id, data.get('emotion'))
                 if changed_user:
                     for client in my_room.values():
-                        await client.send_json(json.loads(json.dumps(changed_user, default=json_serial)))
+                        await client.send_json(json.loads(json.dumps({'event': 'changed_user', 'changed_user': changed_user}, default=json_serial)))
 
             if data.keys() == {'event', 'emotion', 'emoji'} and event_name == 'change_setting_emoji':
                 changed_user = change_setting_emoji(room_id, user.user_id, data.get('emotion'), data.get('emoji'))
                 if changed_user:
                     for client in my_room.values():
-                        await client.send_json(json.loads(json.dumps(changed_user, default=json_serial)))
+                        await client.send_json(json.loads(json.dumps({'event': 'changed_user', 'changed_user': changed_user}, default=json_serial)))
 
             if data.keys() == {'event', 'is_afk'} and event_name == 'switch_afk':
                 changed_user = switch_afk(room_id, user.user_id, data.get('is_afk'))
                 if changed_user:
                     for client in my_room.values():
-                        await client.send_json(json.loads(json.dumps(changed_user, default=json_serial)))
+                        await client.send_json(json.loads(json.dumps({'event': 'changed_user', 'changed_user': changed_user}, default=json_serial)))
 
     except Exception as e:
         print(e)
