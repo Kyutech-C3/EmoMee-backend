@@ -2,7 +2,7 @@ from datetime import datetime
 import json
 from fastapi import APIRouter, Depends
 from starlette.websockets import WebSocket
-from cruds import create_new_room, exit_room_by_id, join_room_by_id
+from cruds import create_new_room, exit_room_by_id, get_room_by_id, join_room_by_id
 from db.db import get_db
 from db.db import Session
 from schemas import CreateRoom, Room as RoomSchema
@@ -26,6 +26,11 @@ user_list = {}
 @router.post('/api/v1/room', response_model=RoomSchema)
 async def create_room(payload: CreateRoom, db: Session = Depends(get_db)):
     room = create_new_room(db, payload.limit)
+    return room
+
+@router.get('/api/v1/room/{room_id}', response_model=RoomSchema)
+async def get_room(room_id: str, db: Session = Depends(get_db)):
+    room = get_room_by_id(db, room_id)
     return room
 
 @router.websocket('/ws/room/{room_id}')

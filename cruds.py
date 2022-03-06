@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from fastapi import HTTPException
 from typing import Tuple
 from db.db import Session
 from db.schema import Room, User
@@ -19,6 +20,12 @@ def create_new_room(db: Session, limit: int) -> RoomSchema:
     db.commit()
     db.refresh(room_orm)
     return room_orm
+
+def get_room_by_id(db: Session, room_id: str) -> RoomSchema:
+    room_orm = db.query(Room).filter(Room.room_id == room_id).first()
+    if room_orm == None:
+        raise HTTPException(status_code=400, detail='this room is not exist')
+    return RoomSchema.from_orm(room_orm)
 
 def join_room_by_id(db: Session, room_id: str, user_name: str) -> Tuple[UserSchema, RoomSchema]:
     room_orm = db.query(Room).filter(Room.room_id == room_id).first()
