@@ -27,6 +27,8 @@ def join_room_by_id(db: Session, room_id: str, user_name: str) -> Tuple[UserSche
     room = RoomSchema.from_orm(room_orm)
     if room.expired_at < datetime.now():
         return None, None
+    if len(room.users) >= 12:
+        return None, None
     user_orm = User(
         room_id = room_id,
         name = user_name
