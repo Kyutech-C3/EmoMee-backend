@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Tuple
 from db.db import Session
-from db.schema import Emoji, Emotion, Room, User
+from db.schema import Room, User
 from schemas import Room as RoomSchema, User as UserSchema
 
 valid_limits = [12, 24, 36, 48]
@@ -46,45 +46,3 @@ def exit_room_by_id(db: Session, user_id: str) -> None:
     db.delete(user_orm)
     db.commit()
     return
-
-def change_emotion(db: Session, user_id: str, emotion: str) -> UserSchema:
-    user_orm = db.query(User).get(user_id)
-    if user_orm == None:
-        return
-    emotion_orm = db.query(Emotion).filter(Emotion.name == emotion).first()
-    if emotion_orm == None:
-        return
-    user_orm.emotion_id = emotion_orm.emotion_id
-    db.commit()
-    db.refresh(user_orm)
-    user = UserSchema.from_orm(user_orm)
-    return user
-
-def change_setting_emoji(db: Session, user_id: str, emotion: str, emoji: str) -> UserSchema:
-    user_orm = db.query(User).get(user_id)
-    if user_orm == None:
-        return
-
-    emotion_orm = db.query(Emotion).filter(Emotion.name == emotion).first()
-
-    emoji_orm = Emoji(
-        user_id = user_id,
-        emotion_id = emotion_orm.emotion_id,
-        name = emoji
-    )
-    
-    db.add(emoji_orm)
-    db.commit()
-    db.refresh(user_orm)
-    user = UserSchema.from_orm(user_orm)
-    return user
-
-def switch_afk(db: Session, user_id: str, is_afk: bool) -> UserSchema:
-    user_orm = db.query(User).get(user_id)
-    if user_orm == None:
-        return
-    user_orm.is_afk = is_afk
-    db.commit()
-    db.refresh(user_orm)
-    user = UserSchema.from_orm(user_orm)
-    return user

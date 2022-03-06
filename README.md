@@ -11,7 +11,6 @@
 ```json
 {
     "event": "change_emotion",
-    "user_id": "1234-abcdefgh-dddddddd",
     "emotion": "happy"
 }
 ```
@@ -20,9 +19,8 @@
 ```json
 {
     "event": "change_setting_emoji",
-    "user_id": "1234-abcdefgh-dddddddd",
     "emotion": "happy",
-    "emoji": ""
+    "emoji": 2
 }
 ```
 
@@ -30,7 +28,6 @@
 ```json
 {
     "event": "switch_afk",
-    "user_id": "1234-abcdefgh-dddddddd",
     "is_afk": true
 }
 ```
