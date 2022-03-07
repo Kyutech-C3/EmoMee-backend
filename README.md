@@ -31,3 +31,11 @@
     "is_afk": true
 }
 ```
+
+- 音声認識時
+```json
+{
+    "event": "switch_speaking",
+    "is_speaking": true
+}
+```

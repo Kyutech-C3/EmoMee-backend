@@ -62,7 +62,8 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
                 'disgusted': 0,
                 'surprised': 0
             },
-            'is_afk': False
+            'is_afk': False,
+            'is_speaking': False
         }
 
         my_room_user = user_list.get(room.room_id)
@@ -110,10 +111,17 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
                     for client in my_room.values():
                         await client.send_json(json.loads(json.dumps({'event': 'changed_user', 'changed_user': changed_user}, default=json_serial)))
 
+            if data.keys() == {'event', 'is_speaking'} and event_name == 'switch_speaking':
+                changed_user = switch_speaking(room_id, user.user_id, data.get('is_speaking'))
+                if changed_user:
+                    for client in my_room.values():
+                        await client.send_json(json.loads(json.dumps({'event': 'changed_user', 'changed_user': changed_user}, default=json_serial)))
+
     except Exception as e:
         print(e)
         exit_room_by_id(db, user.user_id)
         del clients[room.room_id][key]
+        del user_list[room.room_id][user.user_id]
         for client in my_room.values():
             await client.send_json({'event': 'exit_user', 'user': class_to_json(user)})
 
@@ -130,6 +138,11 @@ def change_setting_emoji(room_id: str, user_id: str, emotion: str, emoji: int):
 def switch_afk(room_id: str, user_id: str, is_afk: bool):
     if user_list[room_id][user_id]['is_afk'] != is_afk:
         user_list[room_id][user_id]['is_afk'] = is_afk
+        return user_list[room_id][user_id]
+
+def switch_speaking(room_id: str, user_id: str, is_speaking: bool):
+    if user_list[room_id][user_id]['is_speaking'] != is_speaking:
+        user_list[room_id][user_id]['is_speaking'] = is_speaking
         return user_list[room_id][user_id]
 
 def json_serial(obj):
