@@ -24,6 +24,14 @@
 }
 ```
 
+- リアクション時
+```json
+{
+    "event": "reaction",
+    "reaction": 0
+}
+```
+
 - 離席時
 ```json
 {
