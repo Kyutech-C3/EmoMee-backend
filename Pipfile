@@ -18,6 +18,7 @@ sqlalchemy-utils = "*"
 python-dotenv = "*"
 pyjwt = "*"
 websockets = "*"
+cerberus = "*"
 
 [dev-packages]
 

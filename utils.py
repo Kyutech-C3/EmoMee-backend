@@ -11,3 +11,9 @@ def json_serial(obj):
     elif isinstance(obj, datetime):
         return obj.isoformat()
     raise TypeError ("Type %s not serializable" % type(obj))
+
+def create_dict_with_serial(event_name: str, room_info: dict) -> json:
+        return class_to_json({
+            'event': event_name,
+            'room': room_info
+        })
