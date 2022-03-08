@@ -117,9 +117,10 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
                     for client in my_room.values():
                         await client.send_json(json.loads(json.dumps({'event': 'changed_user', 'changed_user': changed_user}, default=json_serial)))
 
-            if data.keys() == {'event', 'reaction'} and event_name == 'reaction':
-                for client in my_room.values():
-                    await client.send_json(data)
+            if data.keys() == {'event', 'reaction', 'is_animation'} and event_name == 'reaction':
+                if type(data.get('event')) is str and type(data.get('reaction')) is str and type(data.get('is_animation')) is bool:
+                    for client in my_room.values():
+                        await client.send_json(data)
 
     except Exception as e:
         print(e)

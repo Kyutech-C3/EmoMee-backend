@@ -28,7 +28,8 @@
 ```json
 {
     "event": "reaction",
-    "reaction": 0
+    "reaction": "reaction_name.png",
+    "is_animation": false
 }
 ```
 
