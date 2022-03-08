@@ -119,6 +119,7 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
 
             if data.keys() == {'event', 'reaction', 'is_animation'} and event_name == 'reaction':
                 if type(data.get('event')) is str and type(data.get('reaction')) is str and type(data.get('is_animation')) is bool:
+                    data['user_id'] = user.user_id
                     for client in my_room.values():
                         await client.send_json(data)
 
