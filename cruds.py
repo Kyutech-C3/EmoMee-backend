@@ -136,3 +136,30 @@ def get_guild_and_vc_id(room_id: str) -> Tuple[str, str]:
     
     return str(int(guild_id)), str(int(vc_id))
     
+def join_room_discord_user(db: Session, room_id: str, user_id: str) -> Tuple[UserSchema, RoomSchema]:
+    room_orm = db.query(Room).filter(Room.room_id == room_id).first()
+    if room_orm == None:
+        return None, None
+    room = RoomSchema.from_orm(room_orm)
+    if room.expired_at < datetime.now():
+        return None, None
+    if len(room.users) >= 12:
+        return None, None
+    
+    user_orm = db.query(User).get(user_id)
+    user_orm.room_id = room_id
+
+    db.commit()
+    db.refresh(user_orm)
+    db.refresh(room_orm)
+    user = UserSchema.from_orm(user_orm)
+    room = RoomSchema.from_orm(room_orm)
+    return user, room
+
+def exit_room_discord_user(db: Session, user_id: str) -> None:
+    user_orm = db.query(User).get(user_id)
+    user_orm.room_id = None
+
+    db.commit()
+    db.refresh(user_orm)
+    return
