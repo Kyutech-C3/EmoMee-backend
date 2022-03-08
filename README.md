@@ -19,20 +19,9 @@
   - レスポンス
     ```json
     {
-        "user_id": "hogehoge-fugafuga-1234",
-        "name": "hato",
+        "event": "change_emotion",
         "emotion": "happy",
-        "emoji": {
-            "neutral": 0,
-            "happy": 0,
-            "sad": 0,
-            "angry": 0,
-            "fearful": 0,
-            "disgusted": 0,
-            "surprised": 0
-        },
-        "is_afk": false,
-        "is_speaking": false
+        "user_id": "hogehoge-fugafuga-1234"
     }
     ```
 
@@ -49,20 +38,10 @@
   - レスポンス
     ```json
     {
-        "user_id": "hogehoge-fugafuga-1234",
-        "name": "hato",
-        "emotion": "neutral",
-        "emoji": {
-            "neutral": 0,
-            "happy": 2,
-            "sad": 0,
-            "angry": 0,
-            "fearful": 0,
-            "disgusted": 0,
-            "surprised": 0
-        },
-        "is_afk": false,
-        "is_speaking": false
+        "event": "change_setting_emoji",
+        "emotion": "happy",
+        "emoji": 2,
+        "user_id": "hogehoge-fugafuga-1234"
     }
     ```
 
@@ -98,20 +77,9 @@
   - レスポンス
     ```json
     {
-        "user_id": "hogehoge-fugafuga-1234",
-        "name": "hato",
-        "emotion": "neutral",
-        "emoji": {
-            "neutral": 0,
-            "happy": 0,
-            "sad": 0,
-            "angry": 0,
-            "fearful": 0,
-            "disgusted": 0,
-            "surprised": 0
-        },
+        "event": "switch_afk",
         "is_afk": true,
-        "is_speaking": false
+        "user_id": "hogehoge-fugafuga-1234"
     }
     ```
 
@@ -127,19 +95,8 @@
   - レスポンス
     ```json
     {
-        "user_id": "hogehoge-fugafuga-1234",
-        "name": "hato",
-        "emotion": "neutral",
-        "emoji": {
-            "neutral": 0,
-            "happy": 0,
-            "sad": 0,
-            "angry": 0,
-            "fearful": 0,
-            "disgusted": 0,
-            "surprised": 0
-        },
-        "is_afk": false,
-        "is_speaking": true
+        "event": "switch_speaking",
+        "is_speaking": true,
+        "user_id": "hogehoge-fugafuga-1234"
     }
     ```
