@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from fastapi import HTTPException
 from typing import Tuple
 from db.db import Session
-from db.schema import Room, User
+from db.schemas import Room, User
 from schemas import Room as RoomSchema, User as UserSchema
 import decimal
 
