@@ -7,6 +7,99 @@
     参加時，ユーザーがWebSocketを飛ばした時，退出時に同じルームのユーザーにWebSocketが飛ぶ．
 
 ### WebSocketの型
+- ウェブソケット接続時
+  ```json
+  {
+    "event": "init_info",
+    "room": {
+      "room_id": "hogehoge-piyopiyo-fuga",
+      "expired_at": "2022-03-09T07:10:45.989Z",
+      "created_at": "2022-03-09T07:10:45.989Z",
+      "users": [
+        {
+          "user_id": "hogehoge-fugafuga-1234",
+          "name": "hato",
+          "emotion": "neutral",
+          "emoji": {
+            "neutral": 0,
+            "happy": 0,
+            "sad": 0,
+            "angry": 0,
+            "fearful": 0,
+            "disgusted": 0,
+            "surprised": 0
+          },
+          "is_afk": false,
+          "is_speaking": false
+        },
+        {
+          "user_id": "hogehoge-fugafuga-1234",
+          "name": "hato",
+          "emotion": "neutral",
+          "emoji": {
+            "neutral": 0,
+            "happy": 0,
+            "sad": 0,
+            "angry": 0,
+            "fearful": 0,
+            "disgusted": 0,
+            "surprised": 0
+          },
+          "is_afk": false,
+          "is_speaking": false
+        }
+      ]
+    },
+    "user_id": "hogehoge-fugafuga-1234"
+  }
+  ```
+
+- 新規ルームメンバー参加時
+  ```json
+  {
+    "event": "join_user", 
+    "user": {
+      "user_id": "hogehoge-fugafuga-1234",
+      "name": "hato",
+      "emotion": "neutral",
+      "emoji": {
+        "neutral": 0,
+        "happy": 0,
+        "sad": 0,
+        "angry": 0,
+        "fearful": 0,
+        "disgusted": 0,
+        "surprised": 0
+      },
+      "is_afk": false,
+      "is_speaking": false
+    }
+  }
+  ```
+
+- ルームメンバー退出時
+  ```json
+  {
+    "event": "exit_user",
+    "user": {
+      "user_id": "hogehoge-fugafuga-1234",
+      "name": "hato",
+      "emotion": "neutral",
+      "emoji": {
+        "neutral": 0,
+        "happy": 0,
+        "sad": 0,
+        "angry": 0,
+        "fearful": 0,
+        "disgusted": 0,
+        "surprised": 0
+      },
+      "is_afk": false,
+      "is_speaking": false
+    }
+  }
+  ```
+
 - 表情の変化時
   - リクエスト
     ```json

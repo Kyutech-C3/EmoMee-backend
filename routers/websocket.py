@@ -4,7 +4,7 @@ from starlette.websockets import WebSocket
 from cruds import exit_room_by_id, exit_room_discord_user, join_room_by_id, join_room_discord_user
 from db.db import get_db
 from db.db import Session
-from utils import class_to_json, create_dict_with_serial
+from utils import class_to_json
 from validations import allow_event, websocket_validator
 
 clients = {}
@@ -26,6 +26,13 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
         my_info = create_default_user(my_user_id, user.name)
 
         my_room = clients.get(room_id)
+        join_new_user = class_to_json({
+            'event': 'join_user', 
+            'user': my_info
+        })
+        for client in my_room.values():
+            await client.send_json(join_new_user)
+
         if (my_room):
             my_room[my_user_id] = ws
         else:
@@ -39,17 +46,17 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
             user_list[room_id] = { my_user_id: my_info }
             my_room_user = user_list.get(room_id)
 
-        room_info_for_ws = create_dict_with_serial('room_info', {
-            "room_id": room_id,
-            "expired_at": room.expired_at,
-            "created_at": room.created_at,
-            "users": list(my_room_user.values())
+        init_info = class_to_json({
+            'event': 'init_info', 
+            'room': {
+                "room_id": room_id,
+                "expired_at": room.expired_at,
+                "created_at": room.created_at,
+                "users": list(my_room_user.values())
+            },
+            'user_id': my_user_id
         })
-        join_new_user = create_dict_with_serial('join_new_user', my_info)
-        await ws.send_json(room_info_for_ws)
-        for client in my_room.values():
-            await client.send_json(join_new_user)
-
+        await ws.send_json(init_info)
         while True:
             data: dict = await ws.receive_json()
             event_name = data.get('event')
@@ -87,6 +94,12 @@ async def join_discord_room(room_id: str, ws: WebSocket, user_id: str, db: Sessi
         my_info = create_default_user(user_id, user.name)
 
         my_room = clients.get(room_id)
+        join_new_user = class_to_json({
+            'event': 'join_user', 
+            'user': my_info
+        })
+        for client in my_room.values():
+            await client.send_json(join_new_user)
         if (my_room):
             my_room[user_id] = ws
         else:
@@ -100,17 +113,17 @@ async def join_discord_room(room_id: str, ws: WebSocket, user_id: str, db: Sessi
             user_list[room_id] = { user_id: my_info }
             my_room_user = user_list.get(room_id)
 
-        room_info_for_ws = create_dict_with_serial('room_info', {
-            "room_id": room_id,
-            "expired_at": room.expired_at,
-            "created_at": room.created_at,
-            "users": list(my_room_user.values())
+        init_info = class_to_json({
+            'event': 'init_info', 
+            'room': {
+                "room_id": room_id,
+                "expired_at": room.expired_at,
+                "created_at": room.created_at,
+                "users": list(my_room_user.values())
+            },
+            'user_id': user_id
         })
-        join_new_user = create_dict_with_serial('json_new_user', my_info)
-        await ws.send_json(room_info_for_ws)
-        for client in my_room.values():
-            await client.send_json(join_new_user)
-
+        await ws.send_json(init_info)
         while True:
             data: dict = await ws.receive_json()
             event_name = data.get('event')
