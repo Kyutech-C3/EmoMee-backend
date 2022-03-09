@@ -1,0 +1,2 @@
+clients = {}
+user_list = {}

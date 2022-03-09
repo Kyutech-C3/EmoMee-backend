@@ -5,6 +5,8 @@ from db.db import Session
 from db.schemas import Room, User
 from schemas import Room as RoomSchema, User as UserSchema
 import decimal
+from routers.websocket_env import clients, user_list
+from utils import class_to_json
 
 valid_limits = [12, 24, 36, 48]
 
@@ -163,3 +165,25 @@ def exit_room_discord_user(db: Session, user_id: str) -> None:
     db.commit()
     db.refresh(user_orm)
     return
+
+async def exit_discord(db: Session, room_id: str, user_id: str) -> None:
+    user_orm = db.query(User).get(user_id)
+    if user_orm is None:
+        raise HTTPException(status_code=404, detail='user is not exist')
+    user_orm.room_id = None
+    db.commit()
+    ws = clients[room_id][user_id]
+    my_room = clients[room_id]
+    disconnect_notify = {
+        'event': 'websocket_disconnect'
+    }
+    await ws.send_json(disconnect_notify)
+    del clients[room_id][user_id]
+    del user_list[room_id][user_id]
+    await ws.close()
+    exit_user = {
+        'event': 'exit_user',
+        'user': class_to_json(UserSchema.from_orm(user_orm))
+    }
+    for client in my_room.values():
+        await client.send_json(exit_user)

@@ -6,9 +6,7 @@ from db.db import get_db
 from db.db import Session
 from utils import class_to_json
 from validations import allow_event, websocket_request_validator
-
-clients = {}
-user_list = {}
+from .websocket_env import clients, user_list
 
 websocket_router = APIRouter()
 
