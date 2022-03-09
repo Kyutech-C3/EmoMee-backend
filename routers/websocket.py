@@ -16,6 +16,8 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
         user, room = join_room_by_id(db, room_id, user_name)
         if user == None and room == None:
             return
+        if room.is_discord_room:
+            return
         
         my_user_id = user.user_id
 
@@ -85,6 +87,8 @@ async def join_discord_room(room_id: str, ws: WebSocket, user_id: str, db: Sessi
     try:
         user, room = join_room_discord_user(db, room_id, user_id)
         if user == None and room == None:
+            return
+        if not room.is_discord_room:
             return
         
         await ws.accept()

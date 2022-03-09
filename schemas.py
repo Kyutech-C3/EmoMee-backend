@@ -19,6 +19,7 @@ class Room(BaseModel):
     room_id: str
     expired_at: datetime
     created_at: datetime
+    is_discord_room: bool
     users: List[User]
 
     class Config:
