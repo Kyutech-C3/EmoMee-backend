@@ -5,7 +5,7 @@ from cruds import exit_room_by_id, exit_room_discord_user, join_room_by_id, join
 from db.db import get_db
 from db.db import Session
 from utils import class_to_json
-from validations import allow_event, websocket_validator
+from validations import allow_event, websocket_request_validator
 
 clients = {}
 user_list = {}
@@ -65,7 +65,7 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
             if not event_name in allow_event:
                 continue
 
-            if websocket_validator[event_name](data):
+            if websocket_request_validator[event_name](data):
                 data['user_id'] = my_user_id
                 for client in my_room.values():
                     await client.send_json(data)
@@ -132,7 +132,7 @@ async def join_discord_room(room_id: str, ws: WebSocket, user_id: str, db: Sessi
             if not event_name in allow_event:
                 continue
 
-            if websocket_validator[event_name](data):
+            if websocket_request_validator[event_name](data):
                 data['user_id'] = user_id
                 for client in my_room.values():
                     await client.send_json(data)
