@@ -25,7 +25,7 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
 
         my_info = create_default_user(my_user_id, user.name)
 
-        my_room = clients.get(room_id)
+        my_room = clients.get(room_id) or {}
         join_new_user = class_to_json({
             'event': 'join_user', 
             'user': my_info
@@ -93,7 +93,7 @@ async def join_discord_room(room_id: str, ws: WebSocket, user_id: str, db: Sessi
 
         my_info = create_default_user(user_id, user.name)
 
-        my_room = clients.get(room_id)
+        my_room = clients.get(room_id) or {}
         join_new_user = class_to_json({
             'event': 'join_user', 
             'user': my_info
