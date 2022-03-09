@@ -119,6 +119,8 @@ def create_discord_user(db: Session, room_id: str, user_id: int, name: str):
 
 def delete_room_and_user_on_discord(db: Session, room_id: str) -> None:
     room_orm = db.query(Room).filter(Room.room_id == room_id).first()
+    if room_orm is None:
+        raise HTTPException(status_code=404, detail='room is not exist')
     db.delete(room_orm)
 
     guild_id, vc_id = get_guild_and_vc_id(room_id)
