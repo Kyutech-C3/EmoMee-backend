@@ -45,7 +45,7 @@ async def join_room(room_id: str, ws: WebSocket, user_name: str = 'anonymous', d
             "created_at": room.created_at,
             "users": list(my_room_user.values())
         })
-        join_new_user = create_dict_with_serial('json_new_user', my_info)
+        join_new_user = create_dict_with_serial('join_new_user', my_info)
         await ws.send_json(room_info_for_ws)
         for client in my_room.values():
             await client.send_json(join_new_user)
