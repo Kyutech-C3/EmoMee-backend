@@ -8,8 +8,8 @@ api_router = APIRouter()
 discord_router = APIRouter()
 
 @api_router.post('/room', response_model=RoomSchema)
-async def create_room(payload: CreateRoom, db: Session = Depends(get_db)):
-    room = create_new_room(db, payload.limit)
+async def create_room(payload: CreateRoom = None, db: Session = Depends(get_db)):
+    room = create_new_room(db, payload.limit if payload is not None else CreateRoom(limit=24))
     return room
 
 @api_router.get('/room/{room_id}', response_model=RoomSchema)
