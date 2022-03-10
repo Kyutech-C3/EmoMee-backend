@@ -112,7 +112,7 @@ async def core_websocket_func(ws: WebSocket, room: RoomSchema, user_id: str, nam
             data['user_id'] = user_id
             if event_name == 'reaction':
                 threading.Thread(target=return_reaction, args=(room_id, data, data['wait_seconds'])).start()
-            del data['wait_seconds']
+                del data['wait_seconds']
             for client in my_room.values():
                 await client.send_json(data)
 
