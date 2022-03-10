@@ -151,6 +151,8 @@ def join_room_discord_user(db: Session, room_id: str, user_id: str) -> Tuple[Use
 
 def exit_room_discord_user(db: Session, user_id: str) -> None:
     user_orm = db.query(User).get(user_id)
+    if user_orm is None:
+        raise HTTPException(status_code=404, detail='user is not exist')
     user_orm.room_id = None
 
     db.commit()
