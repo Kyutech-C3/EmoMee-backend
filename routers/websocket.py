@@ -1,3 +1,6 @@
+import asyncio
+import threading
+import time
 from fastapi import APIRouter, Depends
 from starlette.websockets import WebSocket
 from cruds import exit_room_by_id, exit_room_discord_user, join_room_by_id, join_room_discord_user
@@ -107,6 +110,9 @@ async def core_websocket_func(ws: WebSocket, room: RoomSchema, user_id: str, nam
         if websocket_request_validator[event_name](data):
             websocket_funcs[event_name](room_id, user_id, data)
             data['user_id'] = user_id
+            if event_name == 'reaction':
+                threading.Thread(target=return_reaction, args=(room_id, data, data['wait_seconds'])).start()
+            del data['wait_seconds']
             for client in my_room.values():
                 await client.send_json(data)
 
@@ -127,3 +133,11 @@ def create_default_user(user_id: str, user_name: str) -> dict:
         'is_afk': False,
         'is_speaking': False
     }
+
+def return_reaction(room_id: str, data: dict, wait_seconds: int):
+    time.sleep(wait_seconds)
+    data['event'] = 'finish_reaction'
+
+    my_room: dict = clients[room_id]
+    for client in my_room.values():
+        asyncio.run(client.send_json(data))

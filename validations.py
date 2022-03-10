@@ -53,6 +53,9 @@ websocket_request_validator = {
         },
         'is_animation': {
             'type': 'boolean'
+        },
+        'wait_seconds': {
+            'type': 'integer'
         }
     }),
     'switch_afk': Validator({
@@ -205,6 +208,21 @@ websocket_responce_validator = {
         'event': {
             'type': 'string',
             'allowed': ['reaction']
+        },
+        'user_id': {
+            'type': 'string'
+        },
+        'reaction': {
+            'type': 'string'
+        },
+        'is_animation': {
+            'type': 'boolean'
+        }
+    }),
+    'finish_reaction': Validator({
+        'event': {
+            'type': 'string',
+            'allowed': ['finish_reaction']
         },
         'user_id': {
             'type': 'string'
