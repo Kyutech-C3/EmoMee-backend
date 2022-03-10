@@ -32,3 +32,4 @@ def get_guild_and_vc_id(room_id: str) -> Tuple[str, str]:
     
 def get_room_id_by_discord_info(guild_id: int, vc_id: int) -> str:
     room_id = f'{guild_id*7}-{vc_id*11}'
+    return room_id
