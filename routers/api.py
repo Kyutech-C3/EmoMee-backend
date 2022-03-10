@@ -3,6 +3,7 @@ from cruds import create_discord_user, create_new_room, create_new_room_on_disco
 from db.db import get_db
 from db.db import Session
 from schemas import CreateDiscordUser, CreateRoom, CreateRoomOnDiscord, DeleteResponse, Room as RoomSchema, User as UserSchema
+from utils import get_room_id_by_discord_info
 
 api_router = APIRouter()
 discord_router = APIRouter()
@@ -31,6 +32,12 @@ async def create_room_on_discord(payload: CreateRoomOnDiscord, db: Session = Dep
 async def create_user_on_discord(room_id: str, payload: CreateDiscordUser, db: Session = Depends(get_db)):
     user = create_discord_user(db, room_id, payload.user_id, payload.name)
     return user
+
+@discord_router.get('/room', response_model=RoomSchema)
+async def get_room_by_discord_info(guild_id: int, vc_id: int, db: Session = Depends(get_db)):
+    room_id = get_room_id_by_discord_info(guild_id, vc_id)
+    room = get_room_by_id(db, room_id)
+    return room
 
 @discord_router.delete('/room/{room_id}/user/{user_id}', response_model=DeleteResponse)
 async def exit_vc_channel(room_id: str, user_id: str, db: Session = Depends(get_db)):

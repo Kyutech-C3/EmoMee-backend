@@ -4,9 +4,8 @@ from typing import Tuple
 from db.db import Session
 from db.schemas import Room, User
 from schemas import Room as RoomSchema, User as UserSchema
-import decimal
 from websocket_funcs import clients, user_list
-from utils import class_to_json
+from utils import class_to_json, get_guild_and_vc_id, get_room_id_by_discord_info
 
 valid_limits = [12, 24, 36, 48]
 
@@ -68,7 +67,7 @@ def delete_expired_rooms(db: Session) -> None:
     db.commit()
 
 def create_new_room_on_discord(db: Session, guild_id: int, vc_id: int, limit: int) -> RoomSchema:
-    room_id = f'{guild_id*7}-{vc_id*11}'
+    room_id = get_room_id_by_discord_info(guild_id, vc_id)
 
     room_orm = db.query(Room).get(room_id)
     if room_orm is not None:
@@ -130,16 +129,6 @@ def delete_room_and_user_on_discord(db: Session, room_id: str) -> None:
         db.delete(user_orm)
     db.commit()
 
-def get_guild_and_vc_id(room_id: str) -> Tuple[str, str]:
-    discord_info = room_id.split('-')
-    guild_id = decimal.Decimal(int(discord_info[0]))
-    vc_id = decimal.Decimal(int(discord_info[1]))
-
-    guild_id /= decimal.Decimal(7)
-    vc_id /= decimal.Decimal(11)
-    
-    return str(int(guild_id)), str(int(vc_id))
-    
 def join_room_discord_user(db: Session, room_id: str, user_id: str) -> Tuple[UserSchema, RoomSchema]:
     room_orm = db.query(Room).filter(Room.room_id == room_id).first()
     if room_orm == None:
