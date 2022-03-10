@@ -68,3 +68,31 @@ class TestRoom:
             exit_user = data['user']
             assert exit_user['name'] == user_name_other
 
+    def test_change_emotion(use_test_db_fixture, room_for_test):
+        user_name = 'test_user'
+        user_name_other = 'test_user_2'
+        with client.websocket_connect(f"/ws/room/{room_for_test.room_id}?user_name={user_name}") as websocket:
+            _ = websocket.receive_json()
+            with client.websocket_connect(f"/ws/room/{room_for_test.room_id}?user_name={user_name_other}") as websocket_other:
+                join_info = websocket.receive_json()
+                other_user_id = join_info['user']['user_id']
+                websocket_other.send_json({
+                    "event": "change_emotion",
+                    "emotion": "happy"
+                })
+                data = websocket.receive_json()
+                assert data['event'] == 'change_emotion'
+                assert websocket_responce_validator[data['event']](data)
+                assert data['user_id'] == other_user_id
+
+    def test_join_other_user(use_test_db_fixture, room_for_test):
+        user_name = 'test_user'
+        user_name_other = 'test_user_2'
+        with client.websocket_connect(f"/ws/room/{room_for_test.room_id}?user_name={user_name}") as websocket:
+            _ = websocket.receive_json()
+            with client.websocket_connect(f"/ws/room/{room_for_test.room_id}?user_name={user_name_other}") as _:
+                data = websocket.receive_json()
+                assert data['event'] == 'join_user'
+                assert websocket_responce_validator[data['event']](data)
+                new_user = data['user']
+                assert new_user['name'] == user_name_other
