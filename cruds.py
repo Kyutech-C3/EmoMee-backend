@@ -5,7 +5,7 @@ from db.db import Session
 from db.schemas import Room, User
 from schemas import Room as RoomSchema, User as UserSchema
 import decimal
-from routers.websocket_env import clients, user_list
+from websocket_funcs import clients, user_list
 from utils import class_to_json
 
 valid_limits = [12, 24, 36, 48]
