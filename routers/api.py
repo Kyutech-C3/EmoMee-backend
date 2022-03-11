@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from cruds import create_discord_user, create_new_room, create_new_room_on_discord, delete_expired_rooms, delete_room_and_user_on_discord, exit_discord, get_room_by_id
+from cruds import create_discord_user, create_new_room, create_new_room_on_discord, delete_expired_rooms, delete_room_and_user_on_discord, exit_discord, get_room_by_id, get_user_by_id
 from db.db import get_db
 from db.db import Session
 from schemas import CreateDiscordUser, CreateRoom, CreateRoomOnDiscord, DeleteResponse, Room as RoomSchema, User as UserSchema
@@ -22,6 +22,11 @@ async def get_room(room_id: str, db: Session = Depends(get_db)):
 async def refresh_rooms(db: Session = Depends(get_db)):
     delete_expired_rooms(db)
     return { 'status': 'OK' }
+
+@api_router.get('/user/{user_id}', UserSchema)
+async def get_user_info(user_id: str, db: Session = Depends(get_db)):
+    user = get_user_by_id(db, user_id)
+    return user
 
 @discord_router.post('/room', response_model=RoomSchema)
 async def create_room_on_discord(payload: CreateRoomOnDiscord, db: Session = Depends(get_db)):

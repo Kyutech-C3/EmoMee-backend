@@ -29,6 +29,12 @@ def get_room_by_id(db: Session, room_id: str) -> RoomSchema:
         raise HTTPException(status_code=400, detail='this room is not exist')
     return RoomSchema.from_orm(room_orm)
 
+def get_user_by_id(db: Session, user_id: str) -> RoomSchema:
+    user_orm = db.query(User).filter(User.user_id.like(f'%{user_id}%')).first()
+    if not user_orm:
+        raise HTTPException(status_code=404, detail='this user is not exist')
+    return UserSchema.from_orm(user_orm)
+
 def join_room_by_id(db: Session, room_id: str, user_name: str) -> Tuple[UserSchema, RoomSchema]:
     room_orm = db.query(Room).filter(Room.room_id == room_id).first()
     if room_orm == None:
