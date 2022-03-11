@@ -23,7 +23,7 @@ async def refresh_rooms(db: Session = Depends(get_db)):
     delete_expired_rooms(db)
     return { 'status': 'OK' }
 
-@api_router.get('/user/{user_id}', UserSchema)
+@api_router.get('/user/{user_id}', response_model=UserSchema)
 async def get_user_info(user_id: str, db: Session = Depends(get_db)):
     user = get_user_by_id(db, user_id)
     return user
