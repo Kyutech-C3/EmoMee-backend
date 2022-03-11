@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from uuid import uuid4
 from pydantic import BaseModel
 import decimal
 from typing import Tuple
@@ -20,16 +21,13 @@ def create_dict_with_serial(event_name: str, room_info: dict) -> json:
             'room': room_info
         })
 
-def get_guild_and_vc_id(room_id: str) -> Tuple[str, str]:
-    discord_info = room_id.split('-')
-    guild_id = decimal.Decimal(int(discord_info[0]))
-    vc_id = decimal.Decimal(int(discord_info[1]))
-
-    guild_id /= decimal.Decimal(7)
-    vc_id /= decimal.Decimal(11)
-    
-    return str(int(guild_id)), str(int(vc_id))
+def get_guild_and_vc_id(rid: str) -> Tuple[str, str]:
+    hex_gid = rid[:rid.find('-')]
+    hex_vcid = rid[rid.find('-')+1:rid.rfind('-')]
+    return str(int(hex_gid, 16)), str(int(hex_vcid, 16))
     
 def get_room_id_by_discord_info(guild_id: int, vc_id: int) -> str:
-    room_id = f'{guild_id*7}-{vc_id*11}'
-    return room_id
+    return f'{str(hex(guild_id))[2:]}-{str(hex(vc_id))[2:]}-{str(uuid4())[:4]}'
+
+def generate_user_id(uid) -> str:
+    return f'{str(hex(uid))[2:]}-{str(uuid4())[:4]}'

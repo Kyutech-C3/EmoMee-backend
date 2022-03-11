@@ -5,7 +5,7 @@ from db.db import Session
 from db.schemas import Room, User
 from schemas import Room as RoomSchema, User as UserSchema
 from websocket_funcs import clients, user_list
-from utils import class_to_json, get_guild_and_vc_id, get_room_id_by_discord_info
+from utils import class_to_json, get_guild_and_vc_id, get_room_id_by_discord_info, generate_user_id
 
 valid_limits = [12, 24, 36, 48]
 
@@ -24,8 +24,8 @@ def create_new_room(db: Session, limit: int) -> RoomSchema:
     return room_orm
 
 def get_room_by_id(db: Session, room_id: str) -> RoomSchema:
-    room_orm = db.query(Room).filter(Room.room_id == room_id).first()
-    if room_orm == None:
+    room_orm = db.query(Room).filter(Room.room_id.like(f'%{room_id}%')).first()
+    if not room_orm:
         raise HTTPException(status_code=400, detail='this room is not exist')
     return RoomSchema.from_orm(room_orm)
 
@@ -59,7 +59,7 @@ def exit_room_by_id(db: Session, user_id: str) -> None:
     return
 
 def delete_expired_rooms(db: Session) -> None:
-    room_orms = db.query(Room).filter(Room.is_discord_room == False).all()
+    room_orms = db.query(Room).all()
     now = datetime.now()
     for room_orm in room_orms:
         if room_orm.expired_at < now:
@@ -69,8 +69,10 @@ def delete_expired_rooms(db: Session) -> None:
 def create_new_room_on_discord(db: Session, guild_id: int, vc_id: int, limit: int) -> RoomSchema:
     room_id = get_room_id_by_discord_info(guild_id, vc_id)
 
-    room_orm = db.query(Room).get(room_id)
-    if room_orm is not None:
+    base_room_id = room_id[:room_id.rfind('-')]
+    room_orm = db.query(Room).filter(Room.room_id.like(f'%{base_room_id}%')).first()
+    print(room_orm)
+    if room_orm:
         raise HTTPException(status_code=400, detail='this room is already exist')
 
     if limit in valid_limits:
@@ -95,16 +97,16 @@ def create_discord_user(db: Session, room_id: str, user_id: int, name: str):
     if room_orm.expired_at < datetime.now():
         raise HTTPException(status_code=404, detail='this room is expired')
 
-    str_user_id = str(user_id)
-    user_orm = db.query(User).get(str_user_id)
-    if user_orm is not None:
+    str_user_id = str(hex(user_id))[2:]
+    user_orm = db.query(User).filter(User.user_id.like(f'%{str_user_id}%')).first()
+    if user_orm:
         raise HTTPException(status_code=400, detail='this user is already exist')
 
     
     guild_id, vc_id = get_guild_and_vc_id(room_id)
 
     user_orm = User(
-        user_id = str_user_id,
+        user_id = generate_user_id(user_id),
         name = name,
         discord_guild_id = guild_id,
         discord_vc_id = vc_id
@@ -161,8 +163,10 @@ def exit_room_discord_user(db: Session, user_id: str) -> None:
 
 async def exit_discord(db: Session, room_id: str, user_id: str) -> None:
     user_orm = db.query(User).get(user_id)
-    if user_orm is None or user_orm.room_id is None:
+    if user_orm is None:
         raise HTTPException(status_code=404, detail='user is not exist')
+    if user_orm.room_id is None:
+        raise HTTPException(status_code=404, detail='user is not exist in room')
     user_orm.room_id = None
     db.commit()
     ws = clients[room_id][user_id]

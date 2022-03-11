@@ -36,7 +36,7 @@ async def create_user_on_discord(room_id: str, payload: CreateDiscordUser, db: S
 @discord_router.get('/room', response_model=RoomSchema)
 async def get_room_by_discord_info(guild_id: int, vc_id: int, db: Session = Depends(get_db)):
     room_id = get_room_id_by_discord_info(guild_id, vc_id)
-    room = get_room_by_id(db, room_id)
+    room = get_room_by_id(db, room_id[:room_id.rfind('-')])
     return room
 
 @discord_router.delete('/room/{room_id}/user/{user_id}', response_model=DeleteResponse)
