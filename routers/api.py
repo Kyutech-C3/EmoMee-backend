@@ -45,8 +45,8 @@ async def get_room_by_discord_info(guild_id: int, vc_id: int, db: Session = Depe
     return room
 
 @discord_router.delete('/room/{room_id}/user/{user_id}', response_model=DeleteResponse)
-async def exit_vc_channel(room_id: str, user_id: str, db: Session = Depends(get_db)):
-    await exit_discord(db, room_id, user_id)
+async def exit_vc_channel(room_id: str, discord_user_id: str, db: Session = Depends(get_db)):
+    await exit_discord(db, room_id, discord_user_id)
     return { 'status': 'OK' }
     
 @discord_router.delete('/room/{room_id}', response_model=DeleteResponse)

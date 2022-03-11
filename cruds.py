@@ -167,12 +167,15 @@ def exit_room_discord_user(db: Session, user_id: str) -> None:
     db.refresh(user_orm)
     return
 
-async def exit_discord(db: Session, room_id: str, user_id: str) -> None:
-    user_orm = db.query(User).get(user_id)
+async def exit_discord(db: Session, room_id: str, discord_user_id: str) -> None:
+    temp_user_id = generate_user_id(int(discord_user_id))
+    core_user_id = temp_user_id[:temp_user_id.rfind('-')]
+    user_orm = db.query(User).filter(User.user_id.like(f'%{core_user_id}%')).first()
     if user_orm is None:
         raise HTTPException(status_code=404, detail='user is not exist')
     if user_orm.room_id is None:
         raise HTTPException(status_code=404, detail='user is not exist in room')
+    user_id = user_orm.user_id
     user_orm.room_id = None
     db.commit()
     ws = clients[room_id][user_id]
