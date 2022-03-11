@@ -26,7 +26,7 @@ def create_new_room(db: Session, limit: int) -> RoomSchema:
 def get_room_by_id(db: Session, room_id: str) -> RoomSchema:
     room_orm = db.query(Room).filter(Room.room_id.like(f'%{room_id}%')).first()
     if not room_orm:
-        raise HTTPException(status_code=400, detail='this room is not exist')
+        raise HTTPException(status_code=404, detail='this room is not exist')
     return RoomSchema.from_orm(room_orm)
 
 def get_user_by_id(db: Session, user_id: str) -> RoomSchema:
