@@ -1,4 +1,9 @@
 # EmoMee Backend
+
+## 関連リポジトリ
+- [EmoMee フロントエンド](https://github.com/Kyutech-C3/EmoMee-frontend)
+- [EmoMee Discord Bot](https://github.com/Kyutech-C3/EmoMee-discord-bot)
+
 ## How to Use
 1. ルームの作成  
     `/api/v1/room`を叩きルームを作成する
